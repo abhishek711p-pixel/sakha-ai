@@ -79,7 +79,7 @@ export const ChatWorkspace = () => {
       }
     }
     loadMessages();
-  }, [activeConvoId, conversations, personas]);
+  }, [activeConvoId]);
 
   // Scroll to bottom
   useEffect(() => {
@@ -462,14 +462,27 @@ export const ChatWorkspace = () => {
         <div className="p-3 md:p-4 bg-background/80 backdrop-blur-md border-t border-border/30 flex-shrink-0">
           <form onSubmit={handleSendMessage} className="max-w-4xl mx-auto flex items-center gap-3">
             <div className="flex-grow glass-card p-2 flex items-center gap-2" style={{ borderColor: "hsla(210, 85%, 50%, 0.3)" }}>
-              <input
-                type="text"
-                required
+              <textarea
+                rows={1}
                 value={inputMsg}
-                onChange={(e) => setInputMsg(e.target.value)}
+                onChange={(e) => {
+                  setInputMsg(e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 150)}px`;
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (inputMsg.trim() && !isReflecting) {
+                      handleSendMessage(e as unknown as React.FormEvent);
+                      e.currentTarget.style.height = 'auto';
+                    }
+                  }
+                }}
                 disabled={isReflecting}
                 placeholder={isReflecting ? `${activeBotName} is typing...` : "Share your thoughts..."}
-                className="flex-1 bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground px-2 py-1 text-sm md:text-base min-w-0"
+                className="flex-1 bg-transparent border-none outline-none text-foreground placeholder:text-muted-foreground px-2 py-1 text-sm md:text-base min-w-0 resize-none overflow-y-auto"
+                style={{ minHeight: '32px', maxHeight: '150px' }}
               />
               <button
                 type="submit"

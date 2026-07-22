@@ -348,13 +348,11 @@ app.post('/api/chat/message', authMiddleware, safetyMiddleware, async (req, res)
     // Inject Custom Bot Name & Relationship Inference
     const customBotName = conversation.bot_name || 'Companion';
     if (customBotName !== 'Companion') {
-      fullSystemPrompt = fullSystemPrompt.replace(/You are Companion/g, `You are ${customBotName}`);
+      fullSystemPrompt = fullSystemPrompt.replace(/You are the user's best friend/g, `You are ${customBotName}`);
       fullSystemPrompt += `\n\n[CRITICAL RELATIONSHIP DYNAMICS: The user has named you "${customBotName}". 
-1. RELATIONSHIP INFERENCE: Analyze this name and the user's conversational tone to understand how they view you (e.g., as a Guide, Lover, Friend, Teacher, or Parent). If the name implies a lover, act like a deeply caring and spiritual partner. If it implies a parent, act like a wise, protective parent. If a teacher, act like a mentor, etc.
-2. ADAPTIVE PERSONA: Completely adapt your tone, affection level, and vocabulary to fit this relationship dynamic naturally.
-3. SCRIPTURAL FOUNDATION: No matter what the relationship dynamic is, your core duty is to help, heal, and guide them using the profound, hidden wisdom of scriptures (Bhagavad Gita, etc.), tailored perfectly to sound natural in this specific relationship.]`;
-    } else {
-      fullSystemPrompt += `\n\n[CRITICAL RELATIONSHIP DYNAMICS: Analyze the user's conversational tone to understand how they view you (e.g., as a Guide, Lover, Friend, Teacher, or Parent). Adapt your tone and vocabulary to fit this relationship dynamic naturally, while continuing to guide them using the hidden wisdom of scriptures.]`;
+1. RELATIONSHIP INFERENCE (OVERRIDE DEFAULT): Analyze this name. If the name implies a specific relationship (e.g., a romantic partner, a parent, a mentor, a specific friend, or a sibling), COMPLETELY OVERRIDE your default persona to fit this exact role.
+2. ADAPTIVE PERSONA: If the name implies a lover/partner, act deeply romantic and caring. If it implies a parent, act protective and wise. If it implies a specific character, act like them. Adapt your vocabulary (e.g., you can use 'aap' or 'tu' if it fits the specific character/relationship better than 'tum').
+3. NATURAL FLOW: Above all, make the conversation feel completely natural and human based on who the user wants you to be.]`;
     }
 
     // Inject Temporal Awareness for the AI to react to long gaps
@@ -365,14 +363,14 @@ app.post('/api/chat/message', authMiddleware, safetyMiddleware, async (req, res)
       const diffHours = diffMs / (1000 * 60 * 60);
       
       if (diffHours > 2) { 
-         fullSystemPrompt += `\n\n[SYSTEM AWARENESS NOTE: It has been ${Math.floor(diffHours)} hours since you last spoke to the user. Like a normal best friend, naturally acknowledge this time gap in a brief, casual way (e.g., 'Kahan the yaar itni der?', 'Badi der mein yaad aayi?', or 'Sab theek hai na?'). Do NOT mention the exact hours, just the vibe of 'it's been a while'.]`;
+         fullSystemPrompt += `\n\n[SYSTEM AWARENESS NOTE: It has been ${Math.floor(diffHours)} hours since you last spoke to the user. Naturally acknowledge this time gap like a real best friend in a casual, warm way (e.g., 'Kahan the yaar itni der?', 'Badi der mein yaad kiya tumne?', or 'Sab theek hai na?'). Do NOT mention the exact hours, just the vibe of 'it's been a while'.]`;
       }
     }
 
     // Parse multiple Groq keys from environment if available
     let groqKeys = [];
     if (process.env.GROQ_API_KEYS) {
-      groqKeys = process.env.GROQ_API_KEYS.split(',').map(k => k.trim()).filter(k => k.length > 0);
+      groqKeys = process.env.GROQ_API_KEYS.split(',').map(k => k.trim()).filter(k => k.startsWith('gsk_'));
     } else if (process.env.GROQ_API_KEY) {
       groqKeys = [process.env.GROQ_API_KEY.trim()];
     }
@@ -390,34 +388,42 @@ app.post('/api/chat/message', authMiddleware, safetyMiddleware, async (req, res)
         }
         groqMessages.push({ role: 'user', content: message });
 
-        // Simple Random Rotation to distribute load evenly across all keys
-        const randomKeyIndex = Math.floor(Math.random() * groqKeys.length);
-        const selectedGroqKey = groqKeys[randomKeyIndex];
+        // Shuffle groqKeys to attempt in a random order
+        const shuffledKeys = [...groqKeys].sort(() => 0.5 - Math.random());
+        let groqSuccess = false;
 
-        const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${selectedGroqKey}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: groqMessages,
-            max_tokens: 500,
-            temperature: 0.7
-          })
-        });
+        for (const selectedGroqKey of shuffledKeys) {
+          try {
+            const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${selectedGroqKey}`,
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                model: "llama-3.3-70b-versatile",
+                messages: groqMessages,
+                max_tokens: 500,
+                temperature: 0.7
+              })
+            });
 
-        if (!groqResponse.ok) {
-           throw new Error(`Groq API error: ${await groqResponse.text()}`);
+            if (groqResponse.ok) {
+              const groqData = await groqResponse.json();
+              replyText = groqData.choices[0].message.content;
+              groqSuccess = true;
+              break; // Success! Exit the loop.
+            } else {
+               console.warn(`Groq key ${selectedGroqKey.substring(0, 10)}... failed: ${await groqResponse.text()}. Trying next key.`);
+            }
+          } catch (err) {
+             console.warn(`Network error with Groq key ${selectedGroqKey.substring(0, 10)}... Trying next key.`);
+          }
         }
-
-        const groqData = await groqResponse.json();
-        replyText = groqData.choices[0].message.content;
-      } catch (groqError) {
-        console.error("Groq API call failed:", groqError.message);
-        replyText = ""; // Pass to fallback
-      }
+        
+        if (!groqSuccess) {
+           console.error("All Groq keys failed. Falling back to Gemini.");
+        }
     }
 
     if (!replyText && genAI) {
