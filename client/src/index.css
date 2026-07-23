@@ -1,6 +1,12 @@
 @import "tailwindcss";
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "@fontsource/playfair-display/400.css";
+@import "@fontsource/playfair-display/500.css";
+@import "@fontsource/playfair-display/600.css";
+@import "@fontsource/playfair-display/700.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
 
 @theme {
   --color-dharmax-bg: #050505;
@@ -24,6 +30,33 @@
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
   --color-krishna-blue: #3b82f6;
+
+  /* DharmaX Theme Variables */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  
+  --color-dharma-ink: #09090b;
+  --color-dharma-ink-2: #18181b;
+  --color-dharma-ink-3: #27272a;
+  --color-dharma-ivory: #fafafa;
+  --color-dharma-ivory-dim: #a1a1aa;
+  --color-dharma-saffron: #fb923c;
+  --color-dharma-saffron-dim: #ea580c;
+  --color-dharma-maroon: #be123c;
+  --color-dharma-gold: #fbbf24;
+  --color-dharma-line-dark: rgba(255, 255, 255, 0.08);
+
+  --color-dharma-parchment: #f4e9d3;
+  --color-dharma-parchment-2: #faf3e4;
+  --color-dharma-earth: #2b2012;
+  --color-dharma-earth-dim: #6b5636;
+  --color-dharma-flame: #f97316;
+  --color-dharma-line-light: rgba(255, 255, 255, 0.16);
+
+  --color-dharma-card-green: #14532d;
+  --color-dharma-card-orange: #9a3412;
+  --color-dharma-card-brown: #27272a;
+  --color-dharma-card-cream: #e5e5e5;
 }
 
 :root {
@@ -93,13 +126,7 @@
 
 
 
-@import "@fontsource/playfair-display/400.css";
-@import "@fontsource/playfair-display/500.css";
-@import "@fontsource/playfair-display/600.css";
-@import "@fontsource/playfair-display/700.css";
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
+
 
 @layer base {
   :root {
@@ -591,5 +618,206 @@ html, body {
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background-color: hsla(217, 91%, 60%, 0.5);
+}
+
+/* ============================================
+   GEN Z ANIMATION UTILITIES
+   ============================================ */
+
+/* Infinite horizontal marquee */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 25s linear infinite;
+}
+
+/* Shimmer gradient text animation */
+@keyframes shimmer-text {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gradient-text {
+  background: linear-gradient(90deg, #f97316, #fbbf24, #fb923c, #fbbf24, #f97316);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text 4s ease infinite;
+}
+
+/* Floating particle drift */
+@keyframes float-particle {
+  0%, 100% { transform: translateY(0px) translateX(0px) rotate(0deg); opacity: 0.4; }
+  25% { transform: translateY(-20px) translateX(10px) rotate(90deg); opacity: 0.8; }
+  50% { transform: translateY(-35px) translateX(-5px) rotate(180deg); opacity: 0.5; }
+  75% { transform: translateY(-15px) translateX(-15px) rotate(270deg); opacity: 0.7; }
+}
+
+/* Breathing/pulsing glow ring */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.15; }
+  50% { transform: scale(1.08); opacity: 0.35; }
+}
+.animate-breathe {
+  animation: breathe 5s ease-in-out infinite;
+}
+
+/* Pulsing ring for CTA button */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Typewriter cursor blink */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Glitch effect */
+@keyframes glitch-1 {
+  0%, 100% { clip-path: inset(0 0 98% 0); transform: translateX(-2px); }
+  20% { clip-path: inset(20% 0 60% 0); transform: translateX(2px); }
+  40% { clip-path: inset(50% 0 30% 0); transform: translateX(-1px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translateX(1px); }
+  80% { clip-path: inset(10% 0 80% 0); transform: translateX(-2px); }
+}
+@keyframes glitch-2 {
+  0%, 100% { clip-path: inset(50% 0 30% 0); transform: translateX(2px); }
+  20% { clip-path: inset(0% 0 90% 0); transform: translateX(-2px); }
+  40% { clip-path: inset(70% 0 10% 0); transform: translateX(1px); }
+  60% { clip-path: inset(30% 0 50% 0); transform: translateX(-1px); }
+  80% { clip-path: inset(90% 0 0% 0); transform: translateX(2px); }
+}
+.glitch-text {
+  position: relative;
+}
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+}
+.glitch-text:hover::before {
+  color: #f97316;
+  opacity: 0.8;
+  animation: glitch-1 0.4s steps(1) forwards;
+}
+.glitch-text:hover::after {
+  color: #fbbf24;
+  opacity: 0.6;
+  animation: glitch-2 0.4s steps(1) forwards;
+}
+
+/* Gradient border glow on hover */
+.glow-border {
+  position: relative;
+}
+.glow-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #f97316, #fbbf24, #fb923c);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: -1;
+}
+.glow-border:hover::before {
+  opacity: 1;
+}
+
+/* Smooth counter animation */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Spotlight cursor effect */
+.spotlight {
+  background: radial-gradient(600px circle at var(--x, 50%) var(--y, 50%), rgba(249, 115, 22, 0.06), transparent 40%);
+}
+
+/* ============================================
+   READING ROOM — LIBRARY ATMOSPHERE
+   ============================================ */
+
+/* 3D bookshelf card tilt */
+.bookshelf-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.bookshelf-card img {
+  transform: translateZ(20px);
+}
+.bookshelf-card .card-info {
+  transform: translateZ(10px);
+}
+
+/* Reader paper texture overlay */
+.paper-texture {
+  position: relative;
+}
+.paper-texture::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.025;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* Reader top fade edge */
+.reader-fade-top {
+  mask-image: linear-gradient(to bottom, transparent 0%, block 4%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, block 4%);
+}
+
+/* Reader bottom fade edge */
+.reader-fade-bottom {
+  mask-image: linear-gradient(to top, transparent 0%, block 4%);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, block 4%);
+}
+
+/* Chapter progress dot */
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+.progress-dot-read {
+  background-color: #f97316;
+}
+.progress-dot-current {
+  background-color: #f97316;
+  box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
+  animation: breathe 2s ease-in-out infinite;
+}
+.progress-dot-unread {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Stats counter animation */
+@keyframes count-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.stat-pop {
+  animation: count-pop 0.3s ease-out;
 }
 

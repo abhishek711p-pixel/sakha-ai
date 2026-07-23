@@ -424,6 +424,9 @@ app.post('/api/chat/message', authMiddleware, safetyMiddleware, async (req, res)
         if (!groqSuccess) {
            console.error("All Groq keys failed. Falling back to Gemini.");
         }
+      } catch (groqError) {
+        console.error("Groq integration failed:", groqError);
+      }
     }
 
     if (!replyText && genAI) {
