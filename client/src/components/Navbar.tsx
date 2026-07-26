@@ -10,7 +10,7 @@ const navLinks = [
   { name: "Learnings", path: "#learnings" },
   { name: "Pricing", path: "#pricing" },
   { name: "About", path: "#about" },
-  { name: "Community", path: "https://chat.whatsapp.com/Ex2TyD2lP5aJGPvwUVT4tS?s=cl&p=a&ilr=1&amv=2" },
+  
 ];
 
 const Navbar = ({ onLoginClick, onLogoutClick, user }: { onLoginClick?: () => void, onLogoutClick?: () => void, user?: any }) => {
@@ -19,9 +19,7 @@ const Navbar = ({ onLoginClick, onLogoutClick, user }: { onLoginClick?: () => vo
 
   const handleNavClick = (path: string) => {
     setIsOpen(false);
-    if (path.startsWith("http")) {
-      window.open(path, "_blank", "noopener,noreferrer");
-    } else if (path.startsWith("#")) {
+    if (path.startsWith("#")) {
       const element = document.querySelector(path);
       element?.scrollIntoView({ behavior: "smooth" });
     }
@@ -40,7 +38,7 @@ const Navbar = ({ onLoginClick, onLogoutClick, user }: { onLoginClick?: () => vo
           <Link to="/" className="flex items-center gap-2">
             <DharmaLogo size={40} />
             <span className="font-display text-2xl font-bold text-gradient-white">
-              Noerax
+              DharmaX
             </span>
           </Link>
 
